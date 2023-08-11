@@ -8,9 +8,9 @@ export function VeSeUsuarioExiste(sanitizedEmail) {
 
 }
 
-export function InsereDadosDeCadastro (sanitizedName, sanitizedEmail, hash) {
+export function InsereDadosDeCadastro (sanitizedName, sanitizedEmail, hash, sanitizedTelefone, sanitizedCep, sanitizedRua, sanitizedNumeroCasa,sanitizedState,sanitizedCidade,sanitizedBairro,sanitizedCpf) {
 
-    const result = db.query('INSERT INTO cadastro (name, email, password) VALUES ($1, $2, $3)',[sanitizedName, sanitizedEmail, hash]);
+    const result = db.query('INSERT INTO cadastro (name, email,telefone,cep,rua,"numeroCasa",state,cidade,bairro,cpf, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',[sanitizedName, sanitizedEmail, sanitizedTelefone, sanitizedCep, sanitizedRua, sanitizedNumeroCasa,sanitizedState,sanitizedCidade,sanitizedBairro,sanitizedCpf, hash]);
 
     return result;
     

@@ -5,12 +5,19 @@ import { InsereDadosDeCadastro, RegistraLogin, VeSeUsuarioExiste, VerificaSeEsta
 
 export async function postCadastro (req, res) {
 
-    const { name, email, password } = req.body;
+    const { name, email, telefone,cep,rua,numeroCasa,state,cidade,bairro,cpf, password } = req.body;
 
     const sanitizedName = stripHtml(name).result.trim();
     const sanitizedEmail = stripHtml(email).result.trim();
+    const sanitizedTelefone = stripHtml(telefone).result.trim();
+    const sanitizedCep = stripHtml(cep).result.trim();
+    const sanitizedRua = stripHtml(rua).result.trim();
+    const sanitizedNumeroCasa = stripHtml(numeroCasa).result.trim();
+    const sanitizedState = stripHtml(state).result.trim();
+    const sanitizedCidade = stripHtml(cidade).result.trim();
+    const sanitizedBairro = stripHtml(bairro).result.trim();
+    const sanitizedCpf = stripHtml(cpf).result.trim();
     const sanitizedPassword = stripHtml(password).result.trim();
-
 
     try {
 
@@ -20,7 +27,7 @@ export async function postCadastro (req, res) {
 
         const hash = bcrypt.hashSync(sanitizedPassword, 10);
 
-        await InsereDadosDeCadastro (sanitizedName, sanitizedEmail, hash);
+        await InsereDadosDeCadastro (sanitizedName, sanitizedEmail, hash, sanitizedTelefone, sanitizedCep, sanitizedRua, sanitizedNumeroCasa,sanitizedState,sanitizedCidade,sanitizedBairro,sanitizedCpf);
 
         res.sendStatus(201);
 
