@@ -16,6 +16,14 @@ export function InsereDadosDeCadastrodeProduto (sanitizedNomeProduto, sanitizedD
     
 }
 
+export function InsereDadosDeCadastrodeProdutoCopia (sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId) {
+
+    const result = db.query('INSERT INTO duplicata (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6)',[sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId]);
+
+    return result;
+    
+}
+
 export function PegarTodososProdutos() {
 
     const result = db.query('SELECT * FROM produtos;');
@@ -34,7 +42,15 @@ export function PorCategorias (categoria) {
 
 export function PorUser (produtosporuser) {
 
-    const result = db.query('SELECT * FROM produtos WHERE userid = $1;',[produtosporuser]);
+    const result = db.query('SELECT * FROM duplicata WHERE userid = $1;',[produtosporuser]);
+
+    return result;
+    
+}
+
+export function PegarInformacoesParaPost (id) {
+
+    const result = db.query('SELECT * FROM produtos WHERE id = $1;',[id]);
 
     return result;
     
@@ -65,6 +81,7 @@ export function selecionaTodasAsInformacoesAtreladasAoProduto (id) {
     return resultado;
 }
 
+
 export function procuraOqueVaiDeletar (id) {
 
     const resultado = db.query('SELECT * FROM carrinho WHERE id = $1;', [id]);
@@ -73,9 +90,25 @@ export function procuraOqueVaiDeletar (id) {
     
 }
 
+export function procuraOqueVaiDeletarNosProdutos (id) {
+
+    const resultado = db.query('SELECT * FROM produtos WHERE id = $1;', [id]);
+
+    return resultado;
+    
+}
+
 export function deletaResultadoDaPesquisa (id) {
 
     const resultado = db.query('DELETE FROM carrinho WHERE id = $1;', [id]);
+
+    return resultado;
+    
+}
+
+export function deletaResultadoDaPesquisaNosProdutos (id) {
+
+    const resultado = db.query('DELETE FROM produtos WHERE id = $1;', [id]);
 
     return resultado;
     
