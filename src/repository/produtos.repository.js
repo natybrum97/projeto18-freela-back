@@ -1,63 +1,70 @@
-import { db } from "../database/database.connection.js";
+import { db } from '../database/database.connection.js'
 
 export function VeSeUsuarioExiste(sanitizedUserId) {
+  const resultado = db.query('SELECT * FROM cadastro WHERE id = $1;', [sanitizedUserId])
 
-    const resultado = db.query('SELECT * FROM cadastro WHERE id = $1;', [sanitizedUserId]);
-
-    return resultado;
-
+  return resultado
 }
 
-export function InsereDadosDeCadastrodeProduto (sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId) {
+export function InsereDadosDeCadastrodeProduto(
+  sanitizedNomeProduto,
+  sanitizedDescricao,
+  valor,
+  sanitizedUrl,
+  sanitizedCategoria,
+  sanitizedUserId,
+) {
+  const result = db.query(
+    'INSERT INTO produtos (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6)',
+    [sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId],
+  )
 
-    const result = db.query('INSERT INTO produtos (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6)',[sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId]);
-
-    return result;
-    
+  return result
 }
 
-export function InsereDadosDeCadastrodeProdutoCopia (sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId) {
+export function InsereDadosDeCadastrodeProdutoCopia(
+  sanitizedNomeProduto,
+  sanitizedDescricao,
+  valor,
+  sanitizedUrl,
+  sanitizedCategoria,
+  sanitizedUserId,
+) {
+  const result = db.query(
+    'INSERT INTO duplicata (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6)',
+    [sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId],
+  )
 
-    const result = db.query('INSERT INTO duplicata (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6)',[sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId]);
-
-    return result;
-    
+  return result
 }
 
 export function PegarTodososProdutos() {
+  const result = db.query('SELECT * FROM produtos;')
 
-    const result = db.query('SELECT * FROM produtos;');
-
-    return result;
-    
+  return result
 }
 
-export function PorCategorias (categoria) {
+export function PorCategorias(categoria) {
+  const result = db.query('SELECT * FROM produtos WHERE "selectedCategory" = $1;', [categoria])
 
-    const result = db.query('SELECT * FROM produtos WHERE "selectedCategory" = $1;',[categoria]);
-
-    return result;
-    
+  return result
 }
 
-export function PorUser (produtosporuser) {
+export function PorUser(produtosporuser) {
+  const result = db.query('SELECT * FROM duplicata WHERE userid = $1;', [produtosporuser])
 
-    const result = db.query('SELECT * FROM duplicata WHERE userid = $1;',[produtosporuser]);
-
-    return result;
-    
+  return result
 }
 
-export function PegarInformacoesParaPost (id) {
+export function PegarInformacoesParaPost(id) {
+  const result = db.query('SELECT * FROM produtos WHERE id = $1;', [id])
 
-    const result = db.query('SELECT * FROM produtos WHERE id = $1;',[id]);
-
-    return result;
-    
+  return result
 }
 
-export function selecionaTodasAsInformacoesAtreladasAoProduto (id) {
-    const resultado = db.query(`
+export function selecionaTodasAsInformacoesAtreladasAoProduto(id) {
+  const resultado = db.query(
+    `
         SELECT
             cadastro.id AS id_do_user,
             produtos.userid AS verificacao_id_do_user,
@@ -75,42 +82,32 @@ export function selecionaTodasAsInformacoesAtreladasAoProduto (id) {
         FROM cadastro
         JOIN produtos ON cadastro.id = produtos.userid
         WHERE produtos.id = $1;`,
-        [id]
-    );
+    [id],
+  )
 
-    return resultado;
+  return resultado
 }
 
+export function procuraOqueVaiDeletar(id) {
+  const resultado = db.query('SELECT * FROM carrinho WHERE id = $1;', [id])
 
-export function procuraOqueVaiDeletar (id) {
-
-    const resultado = db.query('SELECT * FROM carrinho WHERE id = $1;', [id]);
-
-    return resultado;
-    
+  return resultado
 }
 
-export function procuraOqueVaiDeletarNosProdutos (id) {
+export function procuraOqueVaiDeletarNosProdutos(id) {
+  const resultado = db.query('SELECT * FROM produtos WHERE id = $1;', [id])
 
-    const resultado = db.query('SELECT * FROM produtos WHERE id = $1;', [id]);
-
-    return resultado;
-    
+  return resultado
 }
 
-export function deletaResultadoDaPesquisa (id) {
+export function deletaResultadoDaPesquisa(id) {
+  const resultado = db.query('DELETE FROM carrinho WHERE id = $1;', [id])
 
-    const resultado = db.query('DELETE FROM carrinho WHERE id = $1;', [id]);
-
-    return resultado;
-    
+  return resultado
 }
 
-export function deletaResultadoDaPesquisaNosProdutos (id) {
+export function deletaResultadoDaPesquisaNosProdutos(id) {
+  const resultado = db.query('DELETE FROM produtos WHERE id = $1;', [id])
 
-    const resultado = db.query('DELETE FROM produtos WHERE id = $1;', [id]);
-
-    return resultado;
-    
+  return resultado
 }
-
