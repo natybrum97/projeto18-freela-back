@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+requirements
+.vscode
+*.json
+README.md
+.env*

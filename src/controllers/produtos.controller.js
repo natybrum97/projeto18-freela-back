@@ -6,31 +6,31 @@ import pgPromise from "pg-promise";
 
 
 
-export async function postInserirProduto(req, res) {
+// export async function postInserirProduto(req, res) {
 
-    const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body;
+//     const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body;
 
-    const sanitizedNomeProduto = stripHtml(nomeproduto).result.trim();
-    const sanitizedDescricao = stripHtml(descricao).result.trim();
-    const sanitizedUrl = stripHtml(url).result.trim();
-    const sanitizedCategoria = stripHtml(selectedCategory).result.trim();
-    const sanitizedUserId = stripHtml(userid).result.trim();
+//     const sanitizedNomeProduto = stripHtml(nomeproduto).result.trim();
+//     const sanitizedDescricao = stripHtml(descricao).result.trim();
+//     const sanitizedUrl = stripHtml(url).result.trim();
+//     const sanitizedCategoria = stripHtml(selectedCategory).result.trim();
+//     const sanitizedUserId = stripHtml(userid).result.trim();
 
-    try {
+//     try {
 
-        const usuario = await VeSeUsuarioExiste(sanitizedUserId);
+//         const usuario = await VeSeUsuarioExiste(sanitizedUserId);
 
-        if (usuario.rows.length = 0) return res.status(409).send("Esse usuário não está cadastrado!");
+//         if (usuario.rows.length = 0) return res.status(409).send("Esse usuário não está cadastrado!");
 
-        await InsereDadosDeCadastrodeProduto(sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId);
+//         await InsereDadosDeCadastrodeProduto(sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId);
 
-        res.sendStatus(201);
+//         res.sendStatus(201);
 
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
 
-}
+// }
 
 export async function postInserirProdutoCopia(req, res) {
 
@@ -291,13 +291,10 @@ export async function deletaCompras(req, res) {
     try {
         const idPlaceholders = ids.map((_, index) => `$${index + 1}`).join(',');
 
-        // Consulta SQL com os placeholders gerados
         const query = `DELETE FROM produtos WHERE id IN (${idPlaceholders});`;
 
-        // Executar a consulta
         const resultadoProdutos = await db.query(query, ids);
 
-        // Excluir todos os registros da tabela carrinho
         const resultadoCarrinho = await db.query('DELETE FROM carrinho;');
 
 
@@ -309,14 +306,13 @@ export async function deletaCompras(req, res) {
 }
 
 export async function atualizarCheckbox(req, res) {
-    const { ids } = req.body;  // IDs dos produtos a serem atualizados
-    const isChecked = true;    // Valor a ser atualizado (true)
+    const { ids } = req.body;
+    const isChecked = true;
 
     try {
-        // Atualizar os registros na tabela checkbox_states com base nos IDs
+        
         const query = 'INSERT INTO checkbox_states (product_id, is_checked) VALUES ($1, $2) ON CONFLICT (product_id) DO UPDATE SET is_checked = $2';
 
-        // Iterar sobre os IDs e executar a consulta para cada um
         for (const productId of ids) {
             await db.query(query, [productId, isChecked]);
             console.log(`Estado do checkbox para o produto com ID ${productId} foi atualizado para ${isChecked}`);

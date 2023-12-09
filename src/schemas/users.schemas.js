@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const schemaCadastro = Joi.object({
+export const schemaSignUp = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
     telefone: Joi.string().min(10).required(),
@@ -15,7 +15,7 @@ export const schemaCadastro = Joi.object({
     confirmPassword: Joi.string().valid(Joi.ref('password')).required()
 })
 
-export const schemaLogin = Joi.object({
+export const schemaSignIn = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(3).required()
 })
