@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-export const schemaProduto = Joi.object({
+export const schemaProduct = Joi.object({
   nomeproduto: Joi.string().required(),
   descricao: Joi.string().required(),
   valor: Joi.number().required(),
@@ -9,7 +9,7 @@ export const schemaProduto = Joi.object({
   userid: Joi.number().required(),
 })
 
-export const schemaCompra = Joi.object({
+export const schemaBuy = Joi.object({
   carrinho: Joi.required(),
   userid: Joi.string().required(),
   valor: Joi.number().required(),

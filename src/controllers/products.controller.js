@@ -1,123 +1,73 @@
-import { stripHtml } from 'string-strip-html'
-import pgPromise from 'pg-promise'
+import { productsService } from '../services/products.service.js';
+import httpStatus from 'http-status';
+
 import {
-  InsereDadosDeCadastrodeProduto,
-  InsereDadosDeCadastrodeProdutoCopia,
   PegarInformacoesParaPost,
-  VeSeUsuarioExiste,
   deletaResultadoDaPesquisa,
   deletaResultadoDaPesquisaNosProdutos,
   procuraOqueVaiDeletar,
-  procuraOqueVaiDeletarNosProdutos,
-  selecionaTodasAsInformacoesAtreladasAoProduto,
-  PegarTodososProdutos,
-  PorCategorias,
-  PorUser,
-} from '../repository/produtos.repository.js'
+  procuraOqueVaiDeletarNosProdutos
+} from '../repository/products.repository.js'
 import { db } from '../database/database.connection.js'
 
-// export async function postInserirProduto(req, res) {
-
-//     const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body;
-
-//     const sanitizedNomeProduto = stripHtml(nomeproduto).result.trim();
-//     const sanitizedDescricao = stripHtml(descricao).result.trim();
-//     const sanitizedUrl = stripHtml(url).result.trim();
-//     const sanitizedCategoria = stripHtml(selectedCategory).result.trim();
-//     const sanitizedUserId = stripHtml(userid).result.trim();
-
-//     try {
-
-//         const usuario = await VeSeUsuarioExiste(sanitizedUserId);
-
-//         if (usuario.rows.length = 0) return res.status(409).send("Esse usuário não está cadastrado!");
-
-//         await InsereDadosDeCadastrodeProduto(sanitizedNomeProduto, sanitizedDescricao, valor, sanitizedUrl, sanitizedCategoria, sanitizedUserId);
-
-//         res.sendStatus(201);
-
-//     } catch (err) {
-//         res.status(500).send(err.message);
-//     }
-
-// }
-
-export async function postInserirProdutoCopia(req, res) {
-  const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body
-
-  const sanitizedNomeProduto = stripHtml(nomeproduto).result.trim()
-  const sanitizedDescricao = stripHtml(descricao).result.trim()
-  const sanitizedUrl = stripHtml(url).result.trim()
-  const sanitizedCategoria = stripHtml(selectedCategory).result.trim()
-  const sanitizedUserId = stripHtml(userid).result.trim()
-
+export async function insertProduct(req, res, next) {
   try {
-    const usuario = await VeSeUsuarioExiste(sanitizedUserId)
+    const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body
+    const insertProductObject = { nomeproduto, descricao, valor, url, selectedCategory, userid }
+    const result = await productsService.insertProduct(insertProductObject)
+    return res.status(httpStatus.CREATED).send(result)
+  } catch (error) {
+    next(error)
+  }
+}
 
-    if ((usuario.rows.length = 0)) return res.status(409).send('Esse usuário não está cadastrado!')
-
-    await InsereDadosDeCadastrodeProdutoCopia(
-      sanitizedNomeProduto,
-      sanitizedDescricao,
-      valor,
-      sanitizedUrl,
-      sanitizedCategoria,
-      sanitizedUserId,
-    )
-
-    res.sendStatus(201)
+export async function insertProductCopy(req, res, next) {
+  try {
+    const { nomeproduto, descricao, valor, url, selectedCategory, userid } = req.body
+    const insertProductCopyObject = { nomeproduto, descricao, valor, url, selectedCategory, userid }
+    const result = await productsService.insertProductCopy(insertProductCopyObject)
+    return res.status(httpStatus.CREATED).send(result)
+  } catch (error) {
+    next(error)
+  }
+}
+export async function pickUpProducts(req, res) {
+  try {
+    const listProducts = await productsService.pickUpProducts();
+    res.send(listProducts.rows);
   } catch (err) {
     res.status(500).send(err.message)
   }
 }
 
-export async function pegarProdutos(req, res) {
+export async function pickUpProductsByCategory(req, res) {
+  const { categoria } = req.params;
   try {
-    const listaProdutos = await PegarTodososProdutos()
-
-    res.send(listaProdutos.rows)
+    const listProductsByCategory = await productsService.pickUpProductsByCategory(categoria)
+    res.send(listProductsByCategory.rows);
   } catch (err) {
     res.status(500).send(err.message)
   }
 }
 
-export async function pegarProdutosPorCategoria(req, res) {
-  const { categoria } = req.params
-
-  try {
-    const listaProdutosPorCategoria = await PorCategorias(categoria)
-
-    res.send(listaProdutosPorCategoria.rows)
-  } catch (err) {
-    res.status(500).send(err.message)
-  }
-}
-
-export async function pegarProdutosPorId(req, res) {
+export async function getProductsByUserId(req, res) {
   const { sessao } = res.locals
-
   try {
-    const produtosporuser = sessao.rows[0].idUser
-
-    const listaProdutos = await PorUser(produtosporuser)
-
-    res.send(listaProdutos.rows)
+    const productsByUser = sessao.rows[0].idUser
+    const listProducts = await productsService.getProductsByUserId(productsByUser)
+    res.send(listProducts.rows)
   } catch (err) {
     res.status(500).send(err.message)
   }
 }
 
-export async function PegarProdutosPeloSeuIdDeRegistro(req, res) {
-  const { id } = req.params
-
+export async function getProductsByYourRegistrationId(req, res, next) {
+  const { id } = req.params;
   try {
-    const getProduto = await selecionaTodasAsInformacoesAtreladasAoProduto(id)
-
-    if (getProduto.rows.length === 0) return res.status(404).send({ message: 'Produto não encontrado pelo id', id })
-
-    return res.status(200).send(getProduto.rows)
+    const getProduct = await productsService.SelectAllInformationLinkedToTheProduct(id);
+    return res.status(200).send(getProduct.rows);
   } catch (err) {
-    return res.status(500).send(err.message)
+    next(err)
   }
 }
 
@@ -300,4 +250,13 @@ export async function registraCompra(req, res) {
   } catch (err) {
     res.status(500).send(err.message)
   }
+}
+
+export const productsController = {
+  insertProduct,
+  insertProductCopy,
+  pickUpProducts,
+  pickUpProductsByCategory,
+  getProductsByUserId,
+  getProductsByYourRegistrationId
 }

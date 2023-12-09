@@ -13,6 +13,11 @@ export async function seeIfUserExists(sanitizedEmail) {
   return result
 }
 
+export async function seeIfUserExistsById(sanitizedUserId) {
+  const result = await db.query('SELECT * FROM cadastro WHERE id = $1;', [sanitizedUserId])
+  return result
+}
+
 export async function insertRegistrationData(datas, signUpObject) {
   const result = await db.query(
     'INSERT INTO cadastro (name, email,telefone,cep,rua,"numeroCasa",state,cidade,bairro,cpf, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
@@ -37,4 +42,5 @@ export const usersRepository = {
   insertRegistrationData,
   seeIfUserExists,
   registerLogin,
+  seeIfUserExistsById
 }

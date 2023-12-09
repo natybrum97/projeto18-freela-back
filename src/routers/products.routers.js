@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import { schemaCompra, schemaProduto } from '../schemas/produtos.schemas.js'
+import { schemaBuy, schemaProduct } from '../schemas/products.schemas.js'
 import { validateSchema } from '../middlewares/validateSchema.js'
+import { productsController } from '../controllers/products.controller.js'
 import {
-  PegarProdutosPeloSeuIdDeRegistro,
   PegarProdutosPeloSeuIdDeRegistroNaTabelaDeCopia,
   atualizarCheckbox,
   deletaCompras,
@@ -11,25 +11,20 @@ import {
   deletaTudoDoCarrinho,
   getManterCheck,
   pegarCarrinho,
-  pegarProdutos,
-  pegarProdutosPorCategoria,
-  pegarProdutosPorId,
-  postInserirProduto,
-  postInserirProdutoCopia,
   postManterCheck,
   postRegistraCarrinho,
   registraCompra,
-} from '../controllers/produtos.controller.js'
+} from '../controllers/products.controller.js'
 import { validateAuth } from '../middlewares/validateAuth.js'
 
 const produtosRouter = Router()
 
-produtosRouter.post('/inserirProduto', validateAuth, validateSchema(schemaProduto), postInserirProduto)
-produtosRouter.post('/inserirProdutoCopia', validateAuth, validateSchema(schemaProduto), postInserirProdutoCopia)
-produtosRouter.get('/catalogo', validateAuth, pegarProdutos)
-produtosRouter.get('/produtos/categoria/:categoria', validateAuth, pegarProdutosPorCategoria)
-produtosRouter.get('/catalogoUser', validateAuth, pegarProdutosPorId)
-produtosRouter.get('/catalogo/:id', validateAuth, PegarProdutosPeloSeuIdDeRegistro)
+produtosRouter.post('/inserirProduto', validateAuth, validateSchema(schemaProduct), productsController.insertProduct)
+produtosRouter.post('/inserirProdutoCopia', validateAuth, validateSchema(schemaProduct), productsController.insertProductCopy)
+produtosRouter.get('/catalogo', validateAuth, productsController.pickUpProducts)
+produtosRouter.get('/produtos/categoria/:categoria', validateAuth, productsController.pickUpProductsByCategory)
+produtosRouter.get('/catalogoUser', validateAuth, productsController.getProductsByUserId)
+produtosRouter.get('/catalogo/:id', validateAuth, productsController.getProductsByYourRegistrationId)
 produtosRouter.get('/pegaPorIdNaCopia/:id', validateAuth, PegarProdutosPeloSeuIdDeRegistroNaTabelaDeCopia)
 produtosRouter.post('/carrinho', validateAuth, postRegistraCarrinho)
 produtosRouter.get('/carrinho', validateAuth, pegarCarrinho)
@@ -40,6 +35,6 @@ produtosRouter.post('/check', validateAuth, postManterCheck)
 produtosRouter.get('/check', validateAuth, getManterCheck)
 produtosRouter.delete('/excluir', validateAuth, deletaCompras)
 produtosRouter.put('/check', validateAuth, atualizarCheckbox)
-produtosRouter.post('/compra', validateAuth, validateSchema(schemaCompra), registraCompra)
+produtosRouter.post('/compra', validateAuth, validateSchema(schemaBuy), registraCompra)
 
 export default produtosRouter
