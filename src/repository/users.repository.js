@@ -1,21 +1,21 @@
-import { db } from '../database/database.connection.js'
+import { db } from '../database/database.connection.js';
 
 export async function registerLogin(token, user) {
   const result = await db.query('INSERT INTO login (token, "idUser") VALUES ($1, $2) RETURNING *', [
     token,
-    user.rows[0].id,
-  ])
-  return result.rows[0]
+    user.rows[0].id
+  ]);
+  return result.rows[0];
 }
 
 export async function seeIfUserExists(sanitizedEmail) {
-  const result = await db.query('SELECT * FROM cadastro WHERE email = $1;', [sanitizedEmail])
-  return result
+  const result = await db.query('SELECT * FROM cadastro WHERE email = $1;', [sanitizedEmail]);
+  return result;
 }
 
 export async function seeIfUserExistsById(sanitizedUserId) {
-  const result = await db.query('SELECT * FROM cadastro WHERE id = $1;', [sanitizedUserId])
-  return result
+  const result = await db.query('SELECT * FROM cadastro WHERE id = $1;', [sanitizedUserId]);
+  return result;
 }
 
 export async function insertRegistrationData(datas, signUpObject) {
@@ -32,10 +32,10 @@ export async function insertRegistrationData(datas, signUpObject) {
       datas.sanitizedCity,
       datas.sanitizedNeighborhood,
       datas.sanitizedCpf,
-      datas.hash,
-    ],
-  )
-  return result.rows[0]
+      datas.hash
+    ]
+  );
+  return result.rows[0];
 }
 
 export const usersRepository = {
@@ -43,4 +43,4 @@ export const usersRepository = {
   seeIfUserExists,
   registerLogin,
   seeIfUserExistsById
-}
+};

@@ -1,12 +1,32 @@
 import { db } from '../database/database.connection.js';
 
 export async function insertProductRegistrationData(original) {
-  const result = await db.query('INSERT INTO produtos (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3::numeric, $4, $5, $6) RETURNING *', [original.sanitizedProductName, original.sanitizedDescription, original.valor, original.sanitizedUrl, original.sanitizedCategory, original.sanitizedUserId]);
+  const result = await db.query(
+    'INSERT INTO produtos (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3::numeric, $4, $5, $6) RETURNING *',
+    [
+      original.sanitizedProductName,
+      original.sanitizedDescription,
+      original.valor,
+      original.sanitizedUrl,
+      original.sanitizedCategory,
+      original.sanitizedUserId
+    ]
+  );
   return result.rows[0];
 }
 
 export async function insertProductRegistrationDataCopy(copy) {
-  const result = await db.query('INSERT INTO duplicata (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [copy.sanitizedProductName, copy.sanitizedDescription, copy.valor, copy.sanitizedUrl, copy.sanitizedCategory, copy.sanitizedUserId]);
+  const result = await db.query(
+    'INSERT INTO duplicata (nomeproduto, descricao, valor, url,"selectedCategory", userid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+    [
+      copy.sanitizedProductName,
+      copy.sanitizedDescription,
+      copy.valor,
+      copy.sanitizedUrl,
+      copy.sanitizedCategory,
+      copy.sanitizedUserId
+    ]
+  );
   return result.rows[0];
 }
 
@@ -16,22 +36,21 @@ export async function getAllProducts() {
 }
 
 export async function pickUpProductsByCategory(categoria) {
-  const result = await db.query('SELECT * FROM produtos WHERE "selectedCategory" = $1;', [categoria])
+  const result = await db.query('SELECT * FROM produtos WHERE "selectedCategory" = $1;', [categoria]);
   return result;
 }
 
-export async function getProductsByUserId (productsByUser) {
+export async function getProductsByUserId(productsByUser) {
   const result = await db.query('SELECT * FROM duplicata WHERE userid = $1;', [productsByUser]);
   return result;
 }
 
-export async function PegarInformacoesParaPost(id) {
-  const result = await db.query('SELECT * FROM produtos WHERE id = $1;', [id])
-
-  return result
+export async function getInformationToPost(id) {
+  const result = await db.query('SELECT * FROM produtos WHERE id = $1;', [id]);
+  return result;
 }
 
-export async function SelectAllInformationLinkedToTheProduct(id) {
+export async function selectAllInformationLinkedToTheProduct(id) {
   const result = await db.query(
     `
         SELECT
@@ -51,33 +70,13 @@ export async function SelectAllInformationLinkedToTheProduct(id) {
         FROM cadastro
         JOIN produtos ON cadastro.id = produtos.userid
         WHERE produtos.id = $1;`,
-    [id],
+    [id]
   );
   return result;
 }
 
-export function procuraOqueVaiDeletar(id) {
-  const resultado = db.query('SELECT * FROM carrinho WHERE id = $1;', [id])
-
-  return resultado
-}
-
-export function procuraOqueVaiDeletarNosProdutos(id) {
-  const resultado = db.query('SELECT * FROM produtos WHERE id = $1;', [id])
-
-  return resultado
-}
-
-export function deletaResultadoDaPesquisa(id) {
-  const resultado = db.query('DELETE FROM carrinho WHERE id = $1;', [id])
-
-  return resultado
-}
-
-export function deletaResultadoDaPesquisaNosProdutos(id) {
-  const resultado = db.query('DELETE FROM produtos WHERE id = $1;', [id])
-
-  return resultado
+export async function deleteSearchResultInProducts(id) {
+  await db.query('DELETE FROM produtos WHERE id = $1;', [id]);
 }
 
 export const productsRepository = {
@@ -86,5 +85,7 @@ export const productsRepository = {
   getAllProducts,
   pickUpProductsByCategory,
   getProductsByUserId,
-  SelectAllInformationLinkedToTheProduct
-}
+  selectAllInformationLinkedToTheProduct,
+  getInformationToPost,
+  deleteSearchResultInProducts
+};

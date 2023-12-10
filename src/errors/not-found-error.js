@@ -1,6 +1,6 @@
 export function notFoundError() {
   return {
     name: 'NotFoundError',
-    message: 'No result for this search!',
-  }
+    message: 'No result for this search!'
+  };
 }

@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
 export const schemaSignUp = Joi.object({
   name: Joi.string().required(),
@@ -12,10 +12,10 @@ export const schemaSignUp = Joi.object({
   bairro: Joi.string().required(),
   cpf: Joi.string().min(14).max(14).required(),
   password: Joi.string().min(3).required(),
-  confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-})
+  confirmPassword: Joi.string().valid(Joi.ref('password')).required()
+});
 
 export const schemaSignIn = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().min(3).required(),
-})
+  password: Joi.string().min(3).required()
+});
