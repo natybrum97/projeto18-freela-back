@@ -1,6 +1,5 @@
 import httpStatus from 'http-status';
 import { productsService } from '../services/products.service.js';
-import { db } from '../database/database.connection.js';
 
 export async function insertProduct(req, res, next) {
   try {
@@ -82,71 +81,6 @@ export async function deleteProductByIdInTableProducts(req, res, next) {
     res.status(httpStatus.NO_CONTENT).send('Produto Deletado com sucesso!');
   } catch (err) {
     next(err);
-  }
-}
-
-export async function postManterCheck(req, res) {
-  const { productId, isChecked } = req.body;
-
-  try {
-    const query =
-      'INSERT INTO checkbox_states (product_id, is_checked) VALUES ($1, $2) ON CONFLICT (product_id) DO UPDATE SET is_checked = $2';
-    await db.query(query, [productId, isChecked]);
-    console.log(`Estado do checkbox para o produto com ID ${productId} foi salvo`);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-  }
-}
-
-export async function getManterCheck(req, res) {
-  try {
-    const query = 'SELECT product_id, is_checked FROM checkbox_states';
-    const result = await db.query(query);
-    const checkboxStates = {};
-    result.rows.forEach((row) => {
-      checkboxStates[row.product_id] = row.is_checked;
-    });
-    res.json(checkboxStates);
-  } catch (err) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-  }
-}
-
-export async function deletaCompras(req, res) {
-  const { ids } = req.body;
-
-  try {
-    const idPlaceholders = ids.map((_, index) => `$${index + 1}`).join(',');
-
-    const query = `DELETE FROM produtos WHERE id IN (${idPlaceholders});`;
-
-    const resultadoProdutos = await db.query(query, ids);
-
-    const resultadoCarrinho = await db.query('DELETE FROM carrinho;');
-
-    res.status(httpStatus.OK).send(`Produtos com IDs ${ids.join(', ')} foram removidos e o carrinho foi esvaziado.`);
-  } catch (err) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-  }
-}
-
-export async function atualizarCheckbox(req, res) {
-  const { ids } = req.body;
-  const isChecked = true;
-
-  try {
-    const query =
-      'INSERT INTO checkbox_states (product_id, is_checked) VALUES ($1, $2) ON CONFLICT (product_id) DO UPDATE SET is_checked = $2';
-
-    for (const productId of ids) {
-      await db.query(query, [productId, isChecked]);
-      console.log(`Estado do checkbox para o produto com ID ${productId} foi atualizado para ${isChecked}`);
-    }
-
-    res.json({ success: true });
-  } catch (err) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
   }
 }
 
