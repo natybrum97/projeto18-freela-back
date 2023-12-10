@@ -7,7 +7,12 @@ import { validateAuth } from '../middlewares/validateAuth.js';
 const productRouter = Router();
 
 productRouter.post('/inserirProduto', validateAuth, validateSchema(schemaProduct), productsController.insertProduct);
-productRouter.post('/inserirProdutoCopia', validateAuth, validateSchema(schemaProduct), productsController.insertProductCopy);
+productRouter.post(
+  '/inserirProdutoCopia',
+  validateAuth,
+  validateSchema(schemaProduct),
+  productsController.insertProductCopy
+);
 productRouter.get('/catalogo', validateAuth, productsController.pickUpProducts);
 productRouter.get('/produtos/categoria/:categoria', validateAuth, productsController.pickUpProductsByCategory);
 productRouter.get('/catalogoUser', validateAuth, productsController.getProductsByUserId);
